@@ -258,18 +258,18 @@ void loop () {
     if (daysLeft < 10) {
       startingDigit = 4;
       // clear leading zeros if we drop below
-      A7seg[0].writeDigitNumRaw(0, B00000000);
-      A7seg[0].writeDigitNumRaw(1, B00000000);
-      A7seg[0].writeDigitNumRaw(3, B00000000);
+      A7seg[0].writeDigitRaw(0, B00000000);
+      A7seg[0].writeDigitRaw(1, B00000000);
+      A7seg[0].writeDigitRaw(3, B00000000);
     } else if (daysLeft < 100) {
       startingDigit = 3;
       // clear leading zeros if we drop below
-      A7seg[0].writeDigitNumRaw(0, B00000000);
-      A7seg[0].writeDigitNumRaw(1, B00000000);
+      A7seg[0].writeDigitRaw(0, B00000000);
+      A7seg[0].writeDigitRaw(1, B00000000);
     } else if (daysLeft < 1000) {
       startingDigit = 1;
       // clear leading zeros if we drop below
-      A7seg[0].writeDigitNumRaw(0, B00000000);
+      A7seg[0].writeDigitRaw(0, B00000000);
     }
 
     // display digits
