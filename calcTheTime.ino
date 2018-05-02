@@ -1,47 +1,4 @@
 
-/*
-    Function to figure out if we're in Daylight Saving Time, then adding an hour if we are in DST.
-    adapted from nseidle
-    https://github.com/nseidle/Daylight_Savings_Time_Example/blob/master/Daylight_Savings_Time_Example.ino
-
-    This algorithm is programmed to observe Daylight Saving Time in the United States, where as of the time of writing  DST is observed
-    between the second Sunday in March and the first Sunday in November. The rules for DST vary by country and territory.
-    https://en.wikipedia.org/wiki/Daylight_saving_time_by_country
-
-    If you're in a territory which observes DST differently this code will need to be modified. If you're lucky enough to not observe DST
-    then much of this code can be commented out!
-
-    This method doesn't check whether its 2am or not when the time change officially occurs. This could be more accurate at the expense of being more complicated.
-
-*/
-
-/*
-  DateTime calculateTime() {
-
-  DateTime RTCTime = rtc.now();
-
-  if (OBSERVE_DST == true) {
-    if (checkDst() == true) {
-      RTCTime = RTCTime.unixtime() + 3600;  // add 1 hour or 3600 seconds to the time
-    }
-  }
-
-  Serial.print(RTCTime.year(), DEC);
-  Serial.print('/');
-  Serial.print(RTCTime.month(), DEC);
-  Serial.print('/');
-  Serial.print(RTCTime.day(), DEC);
-  Serial.print(' ');
-  Serial.print(RTCTime.hour(), DEC);
-  Serial.print(':');
-  Serial.print(RTCTime.minute(), DEC);
-  Serial.print(':');
-  Serial.print(RTCTime.second(), DEC);
-  Serial.println();
-
-  return RTCTime;
-  }
-*/
 
 // check whether it's DST or not, return boolean
 boolean checkDst() {

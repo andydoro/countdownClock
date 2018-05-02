@@ -11,6 +11,7 @@
 
 
   TO DO:
+    - weird bug where starting digits disappear... why?
     - have illuminated switch flash faster when trumpIsOver, code is blocking
 
   DONE:
@@ -32,13 +33,8 @@
 
 RTC_DS1307 rtc;
 
-// turn into array
+// array to hold our two 4-digit backpacks
 Adafruit_7segment A7seg[2] = {Adafruit_7segment(), Adafruit_7segment()};
-
-/*
-  Adafruit_7segment daysDisplay = Adafruit_7segment();
-  Adafruit_7segment clockDisplay = Adafruit_7segment(); // for hours and minutes
-*/
 
 // unix target date
 // countdown until:
@@ -66,12 +62,16 @@ const int delayTime = 20;
 const int startupDelay = 50;
 const int numeralDelay = 150;
 
-const int BLINKRATE = 2; // 0 is no blink, 1-3 are all acceptable.
+const byte BLINKRATE = 2; // 0 is no blink, 1-3 are all acceptable.
 
-const int brightness = 10; // 0-15 sets brightness
+const byte brightness = 15; // 0-15 sets brightness
 // change based on time of day?
 
-#define NUMDIGITS 10 // our digit array size. extra two for "2"s on our display, which are the dots
+const byte NUMDIGITS = 8;
+
+// define our digits
+// skip 2 and 7, those are the dots
+const byte digitMap[NUMDIGITS] = {0, 1, 3, 4, 5, 6, 8, 9};
 
 int clockDigits[NUMDIGITS];
 int lastClockDigits[NUMDIGITS];
@@ -134,12 +134,8 @@ void setup ( ) {
   A7seg[1].setBrightness(brightness);
 
   // clear display
-
-  // not working properly?
   clearAllDisplays();
   delay(1000);
-
-
 
   //startup sequence
   startupSequence();
@@ -241,28 +237,25 @@ void loop () {
     // get our digits
     clockDigits[0] = daysLeft / 1000;
     clockDigits[1] = (daysLeft % 1000) / 100;
-
-    clockDigits[3] = (daysLeft % 100) / 10;
-    clockDigits[4] = daysLeft % 10;
-    clockDigits[5] = hoursLeft / 10;
-    clockDigits[6] = hoursLeft % 10;
-
-    clockDigits[8] = minutesLeft / 10;
-    clockDigits[9] = minutesLeft % 10;
+    clockDigits[2] = (daysLeft % 100) / 10;
+    clockDigits[3] = daysLeft % 10;
+    clockDigits[4] = hoursLeft / 10;
+    clockDigits[5] = hoursLeft % 10;
+    clockDigits[6] = minutesLeft / 10;
+    clockDigits[7] = minutesLeft % 10;
 
     // compare digits, have they changed?
-    // we have to skip 2s because that's the dots...
 
     // figure out leading zeros for daysLeft, we're skipping those
     int startingDigit = 0;
     if (daysLeft < 10) {
-      startingDigit = 4;
+      startingDigit = 3;
       // clear leading zeros if we drop below
       A7seg[0].writeDigitRaw(0, B00000000);
       A7seg[0].writeDigitRaw(1, B00000000);
       A7seg[0].writeDigitRaw(3, B00000000);
     } else if (daysLeft < 100) {
-      startingDigit = 3;
+      startingDigit = 2;
       // clear leading zeros if we drop below
       A7seg[0].writeDigitRaw(0, B00000000);
       A7seg[0].writeDigitRaw(1, B00000000);
@@ -273,20 +266,18 @@ void loop () {
     }
 
     // display digits
-    for (int i = startingDigit; i < NUMDIGITS; i++) {
-      if ((i != 2) && (i != 7)) { // gotta skip 2s!
-        if ((clockDigits[i] != lastClockDigits[i]) || (firstTime == true)) { // skips 0s first round...
-          flipNum(i / 5, i % 5, lastClockDigits[i], clockDigits[i]);
-          lastClockDigits[i] = clockDigits[i];
-        }
+    for (int i = digitMap[startingDigit]; i < NUMDIGITS; i++) {
+      if ((clockDigits[i] != lastClockDigits[i]) || (firstTime == true)) { // skips 0s first round...
+        flipNum(i / 4, i % 4, lastClockDigits[i], clockDigits[i]);
+        lastClockDigits[i] = clockDigits[i];
       }
     }
 
     if (firstTime == true) {
       firstTime = false; // done!
     }
+    
     //void displayDigits();
-
     // blink the colons every second
     /*
       0x02 - center colon (both dots)

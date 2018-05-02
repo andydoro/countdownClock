@@ -5,7 +5,7 @@ void flipNum(int dispIndex, int digitIndex, int oldNum, int targetNum) {
   // display is counting down, so count up to make more exciting ?
   int i = oldNum;
   while (i != targetNum) {
-    A7seg[dispIndex].writeDigitNum(digitIndex, i);
+    A7seg[dispIndex].writeDigitNum(digitMap[digitIndex], i);
     i++;
     // rollover
     if (i > 9) {
@@ -14,7 +14,7 @@ void flipNum(int dispIndex, int digitIndex, int oldNum, int targetNum) {
     A7seg[dispIndex].writeDisplay();
     delay(startupDelay);
   }
-  A7seg[dispIndex].writeDigitNum(digitIndex, targetNum);
+  A7seg[dispIndex].writeDigitNum(digitMap[digitIndex], targetNum);
   A7seg[dispIndex].writeDisplay();
   delay(numeralDelay); // longer pause between numerals
 }
