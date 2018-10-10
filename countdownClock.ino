@@ -171,6 +171,7 @@ void loop () {
     // our time is going to be in Standard Time, not Daylight Saving Time
     // that solves the problem of taking into account Daylight Saving Time since target date is in Standard Time
 
+    delay(1); // trying to stop weird bug where digits go out?
     DateTime theTime = rtc.now();
 
     // Serial print out
@@ -276,7 +277,7 @@ void loop () {
     if (firstTime == true) {
       firstTime = false; // done!
     }
-    
+
     //void displayDigits();
     // blink the colons every second
     /*
@@ -289,7 +290,7 @@ void loop () {
     */
     if (secondsLeft % 2 == 0) {
       //clockDisplay.drawColon(true);
-      A7seg[1].writeDigitRaw(2, 0x0E); // draw both colon
+      A7seg[1].writeDigitRaw(2, 0x0E); // draw both colons
     } else {
       //clockDisplay.drawColon(false);
       A7seg[1].writeDigitRaw(2, 0x0C); // draw only left colon
