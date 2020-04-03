@@ -43,9 +43,9 @@ Adafruit_7segment A7seg[2] = {Adafruit_7segment(), Adafruit_7segment()};
 // this date is in Standard Time
 // verify calculations here:
 // https://www.timeanddate.com/date/durationresult.html
-const unsigned long trumpOver = 1611151200;
+const unsigned long trumpOver = 1611133200;
 
-#define GMT_OFFSET -5 // Eastern Standard Time is GMT-5
+//#define GMT_OFFSET -5 // Eastern Standard Time is GMT-5
 
 // Do you live in a country or territory that observes Daylight Saving Time?
 // https://en.wikipedia.org/wiki/Daylight_saving_time_by_country
@@ -179,8 +179,7 @@ void loop () {
     Serial.println("RTC time: ");
     printTheTime(theTime);
 
-    // take into account TimeZone
-    theTime = theTime.unixtime() - (GMT_OFFSET * SECONDS_PER_HOUR);
+    //theTime = theTime.unixtime();
 
     // Serial print out
     // time with GMT offset
@@ -307,5 +306,3 @@ void loop () {
   ledPulsing();
 
 }
-
-
