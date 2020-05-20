@@ -6,7 +6,9 @@ Countdown clock on 8 7-segment display digits
 displays DAYS, HOURS, MINUTES on 8 digits
 DDDD : HH : MM
  
-Hardware:
+ 
+Hardware
+-------
 
 * [Metro Mini](https://www.adafruit.com/product/2590)
 * [7-Segment Display w/I2C Backpack](https://www.adafruit.com/product/1270) x 2
