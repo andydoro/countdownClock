@@ -97,7 +97,7 @@ int fadeAmount = normalFadeAmount;
 
 void setup ( ) {
 
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   //Serial.println("program begins!");
 
@@ -266,7 +266,7 @@ void loop () {
     }
 
     // display digits
-    for (int i = digitMap[startingDigit]; i < NUMDIGITS; i++) {
+    for (int i = startingDigit; i < NUMDIGITS; i++) {
       if ((clockDigits[i] != lastClockDigits[i]) || (firstTime == true)) { // skips 0s first round...
         flipNum(i / 4, i % 4, lastClockDigits[i], clockDigits[i]);
         lastClockDigits[i] = clockDigits[i];
