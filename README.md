@@ -3,8 +3,9 @@ Countdown Clock
 
 Countdown clock on 8 7-segment display digits
 
-displays DAYS, HOURS, MINUTES on 8 digits
-DDDD : HH : MM
+displays DAYS, HOURS, MINUTES, SECONDS on 8 digits
+DDDD : HH : MM or
+DD : HH : MM : SS
  
  
 Hardware

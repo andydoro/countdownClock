@@ -89,4 +89,3 @@ void startupSequence(void) {
 
   delay(1000);
 }
-

@@ -116,7 +116,3 @@ void finalSequence(void) {
   delay(1000);
 
 }
-
-
-
-

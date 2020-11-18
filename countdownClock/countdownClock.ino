@@ -1,7 +1,10 @@
+
 /* Trump Countdown Clock
 
-   displays DAYS, HOURS, MINUTES on 8 digits
+   displays DAYS, HOURS, MINUTES (and SECONDS) on 8 digits
    DDDD : HH : MM
+   DD : HH : MM : SS
+   flexible display
 
    HARDWARE:
      Metro Mini https://www.adafruit.com/product/2590
@@ -68,6 +71,10 @@ const byte brightness = 15; // 0-15 sets brightness
 // change based on time of day?
 
 const byte NUMDIGITS = 8;
+
+// set to 2 or 4, define DDDD : HH : MM      or
+//                         DD : HH : MM : SS
+const byte NUMDAYDIGITS = 2; 
 
 // define our digits
 // skip 2 and 7, those are the dots
@@ -219,12 +226,13 @@ void loop () {
     // trump's not over :(
     // calculate and display time left
 
-    int daysLeft, hoursLeft, minutesLeft; // create vars
+    int daysLeft, hoursLeft, minutesLeft, leftoverSecondsLeft; // create vars
 
     // calculate days, hours, minutes left
     daysLeft = secondsLeft / SECONDS_PER_DAY;
     hoursLeft = (secondsLeft % SECONDS_PER_DAY) / SECONDS_PER_HOUR; // throw away anything over a full day, divide by number of seconds in an hour
     minutesLeft = (secondsLeft % SECONDS_PER_HOUR) / 60; // throw away anything over a full hour, divide by 60 (seconds per minute)
+    leftoverSecondsLeft = secondsLeft % 60;
 
     // print our calculations of time left
     Serial.print("days left: ");
@@ -233,42 +241,67 @@ void loop () {
     Serial.println(hoursLeft);
     Serial.print("minutes left: ");
     Serial.println(minutesLeft);
+    Serial.print("seconds left: ");
+    Serial.println(leftoverSecondsLeft);
 
     // get our digits
-    clockDigits[0] = daysLeft / 1000;
-    clockDigits[1] = (daysLeft % 1000) / 100;
-    clockDigits[2] = (daysLeft % 100) / 10;
-    clockDigits[3] = daysLeft % 10;
-    clockDigits[4] = hoursLeft / 10;
-    clockDigits[5] = hoursLeft % 10;
-    clockDigits[6] = minutesLeft / 10;
-    clockDigits[7] = minutesLeft % 10;
+    if (NUMDAYDIGITS == 4) {
+      clockDigits[0] = daysLeft / 1000;
+      clockDigits[1] = (daysLeft % 1000) / 100;
+      clockDigits[2] = (daysLeft % 100) / 10;
+      clockDigits[3] = daysLeft % 10;
+      clockDigits[4] = hoursLeft / 10;
+      clockDigits[5] = hoursLeft % 10;
+      clockDigits[6] = minutesLeft / 10;
+      clockDigits[7] = minutesLeft % 10;
+    } else {
+      clockDigits[0] = (daysLeft % 100) / 10;
+      clockDigits[1] = daysLeft % 10;
+      clockDigits[2] = hoursLeft / 10;
+      clockDigits[3] = hoursLeft % 10;
+      clockDigits[4] = minutesLeft / 10;
+      clockDigits[5] = minutesLeft % 10;
+      clockDigits[6] = leftoverSecondsLeft / 10;
+      clockDigits[7] = leftoverSecondsLeft % 10;
+    }
 
     // compare digits, have they changed?
 
     // figure out leading zeros for daysLeft, we're skipping those
     int startingDigit = 0;
-    if (daysLeft < 10) {
-      startingDigit = 3;
-      // clear leading zeros if we drop below
-      A7seg[0].writeDigitRaw(0, B00000000);
-      A7seg[0].writeDigitRaw(1, B00000000);
-      A7seg[0].writeDigitRaw(3, B00000000);
-    } else if (daysLeft < 100) {
-      startingDigit = 2;
-      // clear leading zeros if we drop below
-      A7seg[0].writeDigitRaw(0, B00000000);
-      A7seg[0].writeDigitRaw(1, B00000000);
-    } else if (daysLeft < 1000) {
-      startingDigit = 1;
-      // clear leading zeros if we drop below
-      A7seg[0].writeDigitRaw(0, B00000000);
+    if (NUMDAYDIGITS == 4) {
+      if (daysLeft < 10) {
+        startingDigit = 1;
+        // clear leading zeros if we drop below
+        A7seg[0].writeDigitRaw(0, B00000000);
+        A7seg[0].writeDigitRaw(1, B00000000);
+        A7seg[0].writeDigitRaw(3, B00000000);
+      } else if (daysLeft < 100) {
+        startingDigit = 2;
+        // clear leading zeros if we drop below
+        A7seg[0].writeDigitRaw(0, B00000000);
+        A7seg[0].writeDigitRaw(1, B00000000);
+      } else if (daysLeft < 1000) {
+        startingDigit = 1;
+        // clear leading zeros if we drop below
+        A7seg[0].writeDigitRaw(0, B00000000);
+      }
+    } else { // for 2 day digits
+      if (daysLeft < 10) {
+        startingDigit = 1;
+        // clear leading zeros if we drop below
+        A7seg[0].writeDigitRaw(0, B00000000);
+      }
     }
 
     // display digits
-    for (int i = startingDigit; i < NUMDIGITS; i++) {
+    for (int i = startingDigit; i < NUMDIGITS; i++) { //skip last digit
       if ((clockDigits[i] != lastClockDigits[i]) || (firstTime == true)) { // skips 0s first round...
-        flipNum(i / 4, i % 4, lastClockDigits[i], clockDigits[i]);
+        if (NUMDAYDIGITS == 4) {
+          flipNum(i / 4, i % 4, lastClockDigits[i], clockDigits[i]);
+        } else { // skip seconds digit
+          flipNumSkip(i / 4, i % 4, lastClockDigits[i], clockDigits[i]);
+        }
         lastClockDigits[i] = clockDigits[i];
       }
     }
@@ -287,6 +320,9 @@ void loop () {
       //clockDisplay.writeDigitRaw(2, 0x0C); // draw only left colon
       //clockDisplay.writeDigitRaw(2, 0x08);
     */
+    if (NUMDAYDIGITS != 4) {
+      A7seg[0].writeDigitRaw(2, 0x02); // draw colon on segment 1
+    }
     if (secondsLeft % 2 == 0) {
       //clockDisplay.drawColon(true);
       A7seg[1].writeDigitRaw(2, 0x0E); // draw both colons
