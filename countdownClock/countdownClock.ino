@@ -41,12 +41,12 @@ Adafruit_7segment A7seg[2] = {Adafruit_7segment(), Adafruit_7segment()};
 
 // unix target date
 // countdown until:
-// January 20, 2021, 9:00:00 am
+// January 20, 2021, 12:00:00 pm
 // using: https://www.epochconverter.com/
 // this date is in Standard Time
 // verify calculations here:
 // https://www.timeanddate.com/date/durationresult.html
-const unsigned long trumpOver = 1611133200;
+const unsigned long trumpOver = 1611144000;
 
 //#define GMT_OFFSET -5 // Eastern Standard Time is GMT-5
 
