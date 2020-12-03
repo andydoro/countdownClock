@@ -14,10 +14,11 @@
 
 
   TO DO:
-    - weird bug where starting digits disappear... why?
     - have illuminated switch flash faster when trumpIsOver, code is blocking
 
   DONE:
+    - change dynamically based on remaining days left
+    - weird bug where starting digits disappear... why?
     - support for timezone and daylight saving time
     - blink dots for seconds
     - add startup sequence
@@ -74,7 +75,7 @@ const byte NUMDIGITS = 8;
 
 // set to 2 or 4, define DDDD : HH : MM      or
 //                         DD : HH : MM : SS
-const byte NUMDAYDIGITS = 2; 
+byte numDayDigits = 4; // set based on days left
 
 // define our digits
 // skip 2 and 7, those are the dots
@@ -244,8 +245,15 @@ void loop () {
     Serial.print("seconds left: ");
     Serial.println(leftoverSecondsLeft);
 
+    // figure out days left, which affects our display
+    if (daysLeft < 100) {
+      numDayDigits = 2;
+    } else {
+      numDayDigits = 4;
+    }
+
     // get our digits
-    if (NUMDAYDIGITS == 4) {
+    if (numDayDigits == 4) {
       clockDigits[0] = daysLeft / 1000;
       clockDigits[1] = (daysLeft % 1000) / 100;
       clockDigits[2] = (daysLeft % 100) / 10;
@@ -269,7 +277,7 @@ void loop () {
 
     // figure out leading zeros for daysLeft, we're skipping those
     int startingDigit = 0;
-    if (NUMDAYDIGITS == 4) {
+    if (numDayDigits == 4) {
       if (daysLeft < 10) {
         startingDigit = 1;
         // clear leading zeros if we drop below
@@ -297,7 +305,7 @@ void loop () {
     // display digits
     for (int i = startingDigit; i < NUMDIGITS; i++) { //skip last digit
       if ((clockDigits[i] != lastClockDigits[i]) || (firstTime == true)) { // skips 0s first round...
-        if (NUMDAYDIGITS == 4) {
+        if (numDayDigits == 4) {
           flipNum(i / 4, i % 4, lastClockDigits[i], clockDigits[i]);
         } else { // skip seconds digit
           flipNumSkip(i / 4, i % 4, lastClockDigits[i], clockDigits[i]);
@@ -320,9 +328,10 @@ void loop () {
       //clockDisplay.writeDigitRaw(2, 0x0C); // draw only left colon
       //clockDisplay.writeDigitRaw(2, 0x08);
     */
-    if (NUMDAYDIGITS != 4) {
+    if (numDayDigits != 4) {
       A7seg[0].writeDigitRaw(2, 0x02); // draw colon on segment 1
     }
+    
     if (secondsLeft % 2 == 0) {
       //clockDisplay.drawColon(true);
       A7seg[1].writeDigitRaw(2, 0x0E); // draw both colons
